@@ -1,0 +1,21 @@
+# Oracle Database Configuration
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521:idempiere
+    username: adempiere
+    password: adempiere
+    driver-class-name: oracle.jdbc.OracleDriver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 30000
+      pool-name: iDempiere-Oracle-HikariCP
+      # Oracle-specific settings
+      data-source-properties:
+        oracle.jdbc.implicitStatementCacheSize: 20
+
+# Oracle-specific logging
+logging:
+  level:
+    oracle.jdbc: INFO

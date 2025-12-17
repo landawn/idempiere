@@ -1,0 +1,22 @@
+# PostgreSQL Database Configuration
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/idempiere
+    username: adempiere
+    password: adempiere
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 30000
+      pool-name: iDempiere-PostgreSQL-HikariCP
+      # PostgreSQL-specific settings
+      data-source-properties:
+        prepareThreshold: 0
+        reWriteBatchedInserts: true
+
+# PostgreSQL-specific logging
+logging:
+  level:
+    org.postgresql: INFO
