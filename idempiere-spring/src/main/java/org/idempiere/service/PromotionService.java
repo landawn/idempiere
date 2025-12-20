@@ -1,5 +1,6 @@
 package org.idempiere.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class PromotionService {
      * Find promotion by ID.
      */
     public Optional<Promotion> findById(int promotionId) {
-        return promotionDao.findById(promotionId);
+        try { return Optional.ofNullable(promotionDao.gett(promotionId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -86,13 +87,13 @@ public class PromotionService {
      * Delete a promotion.
      */
     public void delete(int promotionId) {
-        promotionDao.deleteById(promotionId);
+        try { promotionDao.deleteById(promotionId); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     /**
      * Count all promotions.
      */
     public long count() {
-        return promotionDao.count();
+        return promotionDao.findAllActive().size();
     }
 }

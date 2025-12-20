@@ -27,6 +27,9 @@ public class BankStatementLine extends BaseEntity {
     @Column("C_BankStatementLine_ID")
     private Integer cBankStatementLineId;
 
+    @Column("C_BankStatementLine_UU")
+    private String cBankStatementLineUu;
+
     @Column("C_BankStatement_ID")
     private Integer cBankStatementId;
 
@@ -43,7 +46,10 @@ public class BankStatementLine extends BaseEntity {
     private LocalDateTime valutaDate;
 
     @Column("IsReversal")
-    private String isReversal;
+    private Boolean isReversal;
+
+    @Column("Processed")
+    private Boolean processed;
 
     @Column("C_Currency_ID")
     private Integer cCurrencyId;
@@ -66,9 +72,6 @@ public class BankStatementLine extends BaseEntity {
     @Column("ReferenceNo")
     private String referenceNo;
 
-    @Column("C_BPartner_ID")
-    private Integer cBPartnerId;
-
     @Column("C_Invoice_ID")
     private Integer cInvoiceId;
 
@@ -77,6 +80,9 @@ public class BankStatementLine extends BaseEntity {
 
     @Column("C_Charge_ID")
     private Integer cChargeId;
+
+    @Column("C_BPartner_ID")
+    private Integer cBpartnerId;
 
     @Column("IsManual")
     private String isManual;

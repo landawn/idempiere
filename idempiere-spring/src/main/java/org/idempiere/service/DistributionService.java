@@ -1,5 +1,6 @@
 package org.idempiere.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class DistributionService {
      * Find distribution list by ID.
      */
     public Optional<DistributionList> findById(int distributionListId) {
-        return distributionListDao.findById(distributionListId);
+        try { return Optional.ofNullable(distributionListDao.gett(distributionListId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -53,25 +54,29 @@ public class DistributionService {
      * Save a distribution list.
      */
     public DistributionList save(DistributionList distributionList) {
-        if (distributionList.getMDistributionListId() == null || distributionList.getMDistributionListId() == 0) {
-            distributionListDao.insert(distributionList);
-        } else {
-            distributionListDao.update(distributionList);
+        try {
+            if (distributionList.getMDistributionListId() == null || distributionList.getMDistributionListId() == 0) {
+                distributionListDao.insert(distributionList);
+            } else {
+                distributionListDao.update(distributionList);
+            }
+            return distributionList;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to save", e);
         }
-        return distributionList;
     }
 
     /**
      * Delete a distribution list.
      */
     public void delete(int distributionListId) {
-        distributionListDao.deleteById(distributionListId);
+        try { distributionListDao.deleteById(distributionListId); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     /**
      * Count all distribution lists.
      */
     public long count() {
-        return distributionListDao.count();
+        return distributionListDao.findAllActive().size();
     }
 }

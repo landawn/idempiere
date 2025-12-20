@@ -1,6 +1,7 @@
 package org.idempiere.service;
 
 import java.time.LocalDateTime;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +27,7 @@ public class RecurringService {
      * Find recurring by ID.
      */
     public Optional<Recurring> findById(int recurringId) {
-        return recurringDao.findById(recurringId);
+        try { return Optional.ofNullable(recurringDao.gett(recurringId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -127,13 +128,13 @@ public class RecurringService {
      * Delete a recurring document.
      */
     public void delete(int recurringId) {
-        recurringDao.deleteById(recurringId);
+        try { recurringDao.deleteById(recurringId); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     /**
      * Count all recurring documents.
      */
     public long count() {
-        return recurringDao.count();
+        return recurringDao.findAllActive().size();
     }
 }

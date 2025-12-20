@@ -93,10 +93,10 @@ public class InvoiceLine extends BaseEntity {
     private Integer mAttributeSetInstanceId;
 
     @Column("IsDescription")
-    private Boolean isDescription;
+    private String isDescription;
 
     @Column("Processed")
-    private Boolean processed;
+    private String processed;
 
     @Column("A_Asset_ID")
     private Integer aAssetId;
@@ -132,22 +132,22 @@ public class InvoiceLine extends BaseEntity {
     private java.time.LocalDateTime rrStartDate;
 
     @Column("A_CreateAsset")
-    private Boolean aCreateAsset;
+    private String aCreateAsset;
 
     @Column("A_Asset_Group_ID")
     private Integer aAssetGroupId;
 
     @Column("A_Processed")
-    private Boolean aProcessed;
+    private String aProcessed;
 
     @Column("M_RMALine_ID")
     private Integer mRmaLineId;
 
     @Column("IsFixedAssetInvoice")
-    private Boolean isFixedAssetInvoice;
+    private String isFixedAssetInvoice;
 
     @Column("IsPrinted")
-    private Boolean isPrinted;
+    private String isPrinted;
 
     @Column("C_CostCenter_ID")
     private Integer cCostCenterId;

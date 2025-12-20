@@ -1,5 +1,6 @@
 package org.idempiere.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class InfoWindowService {
      * Find info window by ID.
      */
     public Optional<InfoWindow> findById(int infoWindowId) {
-        return infoWindowDao.findById(infoWindowId);
+        try { return Optional.ofNullable(infoWindowDao.gett(infoWindowId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -72,13 +73,13 @@ public class InfoWindowService {
      * Delete an info window.
      */
     public void delete(int infoWindowId) {
-        infoWindowDao.deleteById(infoWindowId);
+        try { infoWindowDao.deleteById(infoWindowId); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     /**
      * Count all info windows.
      */
     public long count() {
-        return infoWindowDao.count();
+        return infoWindowDao.findAllActive().size();
     }
 }

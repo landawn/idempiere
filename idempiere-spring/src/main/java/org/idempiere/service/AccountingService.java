@@ -2,6 +2,7 @@ package org.idempiere.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -103,7 +104,11 @@ public class AccountingService {
      */
     @Transactional
     public AcctFact createFact(AcctFact fact) {
-        acctFactDao.insert(fact);
-        return fact;
+        try {
+            acctFactDao.insert(fact);
+            return fact;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to create fact", e);
+        }
     }
 }

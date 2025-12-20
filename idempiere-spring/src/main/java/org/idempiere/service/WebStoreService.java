@@ -1,5 +1,6 @@
 package org.idempiere.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class WebStoreService {
      * Find web store by ID.
      */
     public Optional<WebStore> findById(int webStoreId) {
-        return webStoreDao.findById(webStoreId);
+        try { return Optional.ofNullable(webStoreDao.gett(webStoreId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -79,13 +80,13 @@ public class WebStoreService {
      * Delete a web store.
      */
     public void delete(int webStoreId) {
-        webStoreDao.deleteById(webStoreId);
+        try { webStoreDao.deleteById(webStoreId); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     /**
      * Count all web stores.
      */
     public long count() {
-        return webStoreDao.count();
+        return webStoreDao.findAllActive().size();
     }
 }

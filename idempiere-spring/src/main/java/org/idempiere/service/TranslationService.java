@@ -1,5 +1,6 @@
 package org.idempiere.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,7 +86,7 @@ public class TranslationService {
      */
     @Transactional
     public void markAsTranslated(int messageTrlId) {
-        Optional<MessageTrl> optTrl = translationDao.findById(messageTrlId);
+        Optional<MessageTrl> optTrl = Optional.ofNullable(translationDao.gett(messageTrlId));
         if (optTrl.isPresent()) {
             MessageTrl trl = optTrl.get();
             trl.setIsTranslated("Y");

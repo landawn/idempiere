@@ -1,5 +1,6 @@
 package org.idempiere.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class ReportService {
      * Find report by ID.
      */
     public Optional<Report> findById(int reportId) {
-        return reportDao.findById(reportId);
+        try { return Optional.ofNullable(reportDao.gett(reportId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -86,13 +87,13 @@ public class ReportService {
      * Delete a report.
      */
     public void delete(int reportId) {
-        reportDao.deleteById(reportId);
+        try { reportDao.deleteById(reportId); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     /**
      * Count all reports.
      */
     public long count() {
-        return reportDao.count();
+        return reportDao.findAllActive().size();
     }
 }

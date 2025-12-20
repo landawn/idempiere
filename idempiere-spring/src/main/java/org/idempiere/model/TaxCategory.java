@@ -24,6 +24,9 @@ public class TaxCategory extends BaseEntity {
     @Column("C_TaxCategory_ID")
     private Integer cTaxCategoryId;
 
+    @Column("C_TaxCategory_UU")
+    private String cTaxCategoryUu;
+
     @Column("Name")
     private String name;
 

@@ -1,5 +1,6 @@
 package org.idempiere.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +30,7 @@ public class ProjectPhaseService {
      * Get phase by ID.
      */
     public Optional<ProjectPhase> getPhaseById(int phaseId) {
-        return projectPhaseDao.findById(phaseId);
+        try { return Optional.ofNullable(projectPhaseDao.gett(phaseId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -50,38 +51,48 @@ public class ProjectPhaseService {
      * Create a new project phase.
      */
     public ProjectPhase createPhase(ProjectPhase phase) {
-        projectPhaseDao.insert(phase);
-        return phase;
+        try {
+            projectPhaseDao.insert(phase);
+            return phase;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to create phase", e);
+        }
     }
 
     /**
      * Update a project phase.
      */
     public ProjectPhase updatePhase(ProjectPhase phase) {
-        projectPhaseDao.update(phase);
-        return phase;
+        try {
+            projectPhaseDao.update(phase);
+            return phase;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to update phase", e);
+        }
     }
 
     /**
      * Complete a project phase.
      */
     public ProjectPhase completePhase(int phaseId) {
-        Optional<ProjectPhase> optPhase = projectPhaseDao.findById(phaseId);
-        if (optPhase.isPresent()) {
-            ProjectPhase phase = optPhase.get();
-            phase.setIsComplete("Y");
-            phase.setProcessed("Y");
-            projectPhaseDao.update(phase);
-            return phase;
+        try {
+            ProjectPhase phase = projectPhaseDao.gett(phaseId);
+            if (phase != null) {
+                phase.setIsComplete("Y");
+                projectPhaseDao.update(phase);
+                return phase;
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to complete phase", e);
         }
-        return null;
     }
 
     /**
      * Get task by ID.
      */
     public Optional<ProjectTask> getTaskById(int taskId) {
-        return projectTaskDao.findById(taskId);
+        try { return Optional.ofNullable(projectTaskDao.gett(taskId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -109,32 +120,40 @@ public class ProjectPhaseService {
      * Create a new project task.
      */
     public ProjectTask createTask(ProjectTask task) {
-        projectTaskDao.insert(task);
-        return task;
+        try {
+            projectTaskDao.insert(task);
+            return task;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to create task", e);
+        }
     }
 
     /**
      * Update a project task.
      */
     public ProjectTask updateTask(ProjectTask task) {
-        projectTaskDao.update(task);
-        return task;
+        try {
+            projectTaskDao.update(task);
+            return task;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to update task", e);
+        }
     }
 
     /**
      * Complete a project task.
      */
     public ProjectTask completeTask(int taskId) {
-        Optional<ProjectTask> optTask = projectTaskDao.findById(taskId);
-        if (optTask.isPresent()) {
-            ProjectTask task = optTask.get();
-            task.setIsComplete("Y");
-            task.setProjectTaskStatus("C");
-            task.setDateFinish(java.time.LocalDate.now());
-            task.setProcessed("Y");
-            projectTaskDao.update(task);
-            return task;
+        try {
+            ProjectTask task = projectTaskDao.gett(taskId);
+            if (task != null) {
+                task.setStatus("C");
+                projectTaskDao.update(task);
+                return task;
+            }
+            return null;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to complete task", e);
         }
-        return null;
     }
 }

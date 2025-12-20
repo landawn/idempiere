@@ -1,6 +1,7 @@
 package org.idempiere.service;
 
 import java.time.LocalDateTime;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +27,7 @@ public class RequestService {
      * Find request by ID.
      */
     public Optional<Request> findById(int requestId) {
-        return requestDao.findById(requestId);
+        try { return Optional.ofNullable(requestDao.gett(requestId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -135,13 +136,13 @@ public class RequestService {
      * Delete a request.
      */
     public void delete(int requestId) {
-        requestDao.deleteById(requestId);
+        try { requestDao.deleteById(requestId); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     /**
      * Count all requests.
      */
     public long count() {
-        return requestDao.count();
+        return requestDao.findAllActive().size();
     }
 }

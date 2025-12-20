@@ -2,6 +2,7 @@ package org.idempiere.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +32,7 @@ public class CostService {
      * Get cost by ID.
      */
     public Optional<Cost> getById(int costId) {
-        return costDao.findById(costId);
+        try { return Optional.ofNullable(costDao.gett(costId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -66,53 +67,65 @@ public class CostService {
      * Create or update product cost.
      */
     public Cost saveCost(Cost cost) {
-        if (cost.getMCostId() == null || cost.getMCostId() == 0) {
-            costDao.insert(cost);
-        } else {
-            costDao.update(cost);
+        try {
+            if (cost.getMCostUU() == null || cost.getMCostUU().isEmpty()) {
+                costDao.insert(cost);
+            } else {
+                costDao.update(cost);
+            }
+            return cost;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to save cost", e);
         }
-        return cost;
     }
 
     /**
      * Update cost with new transaction.
      */
     public Cost updateCost(int costId, BigDecimal amt, BigDecimal qty) {
-        Optional<Cost> optCost = costDao.findById(costId);
-        if (optCost.isPresent()) {
-            Cost cost = optCost.get();
+        try {
+            Optional<Cost> optCost = Optional.ofNullable(costDao.gett(costId));
+            if (optCost.isPresent()) {
+                Cost cost = optCost.get();
 
-            // Update cumulated values
-            BigDecimal newCumulatedAmt = cost.getCumulatedAmt().add(amt);
-            BigDecimal newCumulatedQty = cost.getCumulatedQty().add(qty);
-            cost.setCumulatedAmt(newCumulatedAmt);
-            cost.setCumulatedQty(newCumulatedQty);
+                // Update cumulated values
+                BigDecimal newCumulatedAmt = cost.getCumulatedAmt().add(amt);
+                BigDecimal newCumulatedQty = cost.getCumulatedQty().add(qty);
+                cost.setCumulatedAmt(newCumulatedAmt);
+                cost.setCumulatedQty(newCumulatedQty);
 
-            // Update current values
-            BigDecimal newCurrentQty = cost.getCurrentQty().add(qty);
-            cost.setCurrentQty(newCurrentQty);
+                // Update current values
+                BigDecimal newCurrentQty = cost.getCurrentQty().add(qty);
+                cost.setCurrentQty(newCurrentQty);
 
-            // Recalculate current cost price (average costing)
-            if (newCumulatedQty.compareTo(BigDecimal.ZERO) != 0) {
-                BigDecimal newCostPrice = newCumulatedAmt.divide(newCumulatedQty, 6, RoundingMode.HALF_UP);
-                cost.setCurrentCostPrice(newCostPrice);
+                // Recalculate current cost price (average costing)
+                if (newCumulatedQty.compareTo(BigDecimal.ZERO) != 0) {
+                    BigDecimal newCostPrice = newCumulatedAmt.divide(newCumulatedQty, 6, RoundingMode.HALF_UP);
+                    cost.setCurrentCostPrice(newCostPrice);
+                }
+
+                costDao.update(cost);
+                return cost;
             }
-
-            costDao.update(cost);
-            return cost;
+            return null;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to update cost", e);
         }
-        return null;
     }
 
     /**
      * Freeze cost for a product.
      */
     public void freezeCost(int costId) {
-        Optional<Cost> optCost = costDao.findById(costId);
-        if (optCost.isPresent()) {
-            Cost cost = optCost.get();
-            cost.setIsCostFrozen("Y");
-            costDao.update(cost);
+        try {
+            Optional<Cost> optCost = Optional.ofNullable(costDao.gett(costId));
+            if (optCost.isPresent()) {
+                Cost cost = optCost.get();
+                cost.setIsCostFrozen("Y");
+                costDao.update(cost);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to freeze cost", e);
         }
     }
 
@@ -120,11 +133,15 @@ public class CostService {
      * Set future cost price.
      */
     public void setFutureCostPrice(int costId, BigDecimal futureCostPrice) {
-        Optional<Cost> optCost = costDao.findById(costId);
-        if (optCost.isPresent()) {
-            Cost cost = optCost.get();
-            cost.setFutureCostPrice(futureCostPrice);
-            costDao.update(cost);
+        try {
+            Optional<Cost> optCost = Optional.ofNullable(costDao.gett(costId));
+            if (optCost.isPresent()) {
+                Cost cost = optCost.get();
+                cost.setFutureCostPrice(futureCostPrice);
+                costDao.update(cost);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to set future cost price", e);
         }
     }
 }

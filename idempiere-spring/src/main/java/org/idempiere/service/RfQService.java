@@ -1,5 +1,6 @@
 package org.idempiere.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class RfQService {
      * Find RfQ by ID.
      */
     public Optional<RfQ> findById(int rfQId) {
-        return rfQDao.findById(rfQId);
+        try { return Optional.ofNullable(rfQDao.gett(rfQId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -86,13 +87,13 @@ public class RfQService {
      * Delete an RfQ.
      */
     public void delete(int rfQId) {
-        rfQDao.deleteById(rfQId);
+        try { rfQDao.deleteById(rfQId); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     /**
      * Count all RfQs.
      */
     public long count() {
-        return rfQDao.count();
+        return rfQDao.findOpenRfQs().size();
     }
 }

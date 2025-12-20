@@ -2,6 +2,7 @@ package org.idempiere.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +33,11 @@ public class CurrencyService {
      * Get currency by ID.
      */
     public Optional<Currency> getCurrency(int currencyId) {
-        return currencyDao.findById(currencyId);
+        try {
+            return Optional.ofNullable(currencyDao.gett(currencyId));
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to find by id", e);
+        }
     }
 
     /**
@@ -97,12 +102,16 @@ public class CurrencyService {
      */
     @Transactional
     public CurrencyRate createRate(CurrencyRate rate) {
-        // Calculate inverse rate if not provided
-        if (rate.getDivideRate() == null && rate.getMultiplyRate() != null && rate.getMultiplyRate().compareTo(BigDecimal.ZERO) != 0) {
-            rate.setDivideRate(BigDecimal.ONE.divide(rate.getMultiplyRate(), 12, RoundingMode.HALF_UP));
+        try {
+            // Calculate inverse rate if not provided
+            if (rate.getDivideRate() == null && rate.getMultiplyRate() != null && rate.getMultiplyRate().compareTo(BigDecimal.ZERO) != 0) {
+                rate.setDivideRate(BigDecimal.ONE.divide(rate.getMultiplyRate(), 12, RoundingMode.HALF_UP));
+            }
+            currencyRateDao.insert(rate);
+            return rate;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to create currency rate", e);
         }
-        currencyRateDao.insert(rate);
-        return rate;
     }
 
     /**
@@ -110,8 +119,12 @@ public class CurrencyService {
      */
     @Transactional
     public CurrencyRate updateRate(CurrencyRate rate) {
-        currencyRateDao.update(rate);
-        return rate;
+        try {
+            currencyRateDao.update(rate);
+            return rate;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to update currency rate", e);
+        }
     }
 
     /**
@@ -119,6 +132,10 @@ public class CurrencyService {
      */
     @Transactional
     public void deleteRate(int rateId) {
-        currencyRateDao.deleteById(rateId);
+        try {
+            currencyRateDao.deleteById(rateId);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to delete", e);
+        }
     }
 }

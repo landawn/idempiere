@@ -12,8 +12,8 @@ import lombok.experimental.SuperBuilder;
 import java.math.BigDecimal;
 
 /**
- * Deposit Batch Line entity - C_DepositBatchLine table.
- * Deposit batch line item.
+ * Deposit Batch Line entity - individual deposit batch transactions.
+ * Maps to C_DepositBatchLine table.
  */
 @Data
 @SuperBuilder
@@ -26,17 +26,29 @@ public class DepositBatchLine extends BaseEntity {
     @Column("C_DepositBatchLine_ID")
     private Integer cDepositBatchLineId;
 
+    @Column("C_DepositBatchLine_UU")
+    private String cDepositBatchLineUu;
+
     @Column("C_DepositBatch_ID")
     private Integer cDepositBatchId;
-
-    @Column("C_Payment_ID")
-    private Integer cPaymentId;
 
     @Column("Line")
     private Integer line;
 
+    @Column("C_Payment_ID")
+    private Integer cPaymentId;
+
+    @Column("C_BankStatementLine_ID")
+    private Integer cBankStatementLineId;
+
+    @Column("C_BPartner_ID")
+    private Integer cBpartnerId;
+
     @Column("PayAmt")
     private BigDecimal payAmt;
+
+    @Column("Description")
+    private String description;
 
     @Column("Processed")
     private String processed;

@@ -1,6 +1,7 @@
 package org.idempiere.service;
 
 import java.time.LocalDateTime;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +30,7 @@ public class InvoiceService {
     // Invoice operations
 
     public Optional<Invoice> findById(Integer id) {
-        return invoiceDao.findById(id);
+        try { return Optional.ofNullable(invoiceDao.gett(id)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     public List<Invoice> findAll() {
@@ -89,32 +90,40 @@ public class InvoiceService {
     }
 
     public Invoice save(Invoice invoice) {
-        if (invoice.getCInvoiceId() == null) {
-            invoiceDao.insert(invoice);
-        } else {
-            invoiceDao.update(invoice);
+        try {
+            if (invoice.getCInvoiceId() == null) {
+                invoiceDao.insert(invoice);
+            } else {
+                invoiceDao.update(invoice);
+            }
+            return invoice;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to save", e);
         }
-        return invoice;
     }
 
     public void delete(Integer id) {
         // First delete all invoice lines
         List<InvoiceLine> lines = invoiceLineDao.findByInvoiceId(id);
         for (InvoiceLine line : lines) {
-            invoiceLineDao.deleteById(line.getCInvoiceLineId());
+            try {
+                invoiceLineDao.deleteById(line.getCInvoiceLineId());
+            } catch (SQLException e) {
+                throw new RuntimeException("Failed to delete invoice line", e);
+            }
         }
         // Then delete the invoice
-        invoiceDao.deleteById(id);
+        try { invoiceDao.deleteById(id); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     public boolean exists(Integer id) {
-        return invoiceDao.exists(id);
+        try { return invoiceDao.exists(id); } catch (SQLException e) { throw new RuntimeException("Failed to check exists", e); }
     }
 
     // InvoiceLine operations
 
     public Optional<InvoiceLine> findLineById(Integer id) {
-        return invoiceLineDao.findById(id);
+        try { return Optional.ofNullable(invoiceLineDao.gett(id)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     public List<InvoiceLine> findLinesByInvoiceId(Integer invoiceId) {
@@ -130,15 +139,19 @@ public class InvoiceService {
     }
 
     public InvoiceLine saveLine(InvoiceLine invoiceLine) {
-        if (invoiceLine.getCInvoiceLineId() == null) {
-            invoiceLineDao.insert(invoiceLine);
-        } else {
-            invoiceLineDao.update(invoiceLine);
+        try {
+            if (invoiceLine.getCInvoiceLineId() == null) {
+                invoiceLineDao.insert(invoiceLine);
+            } else {
+                invoiceLineDao.update(invoiceLine);
+            }
+            return invoiceLine;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to save", e);
         }
-        return invoiceLine;
     }
 
     public void deleteLine(Integer lineId) {
-        invoiceLineDao.deleteById(lineId);
+        try { invoiceLineDao.deleteById(lineId); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 }

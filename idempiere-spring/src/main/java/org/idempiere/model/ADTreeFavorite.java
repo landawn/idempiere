@@ -30,9 +30,6 @@ public class ADTreeFavorite extends BaseEntity {
     @Column("Description")
     private String description;
 
-    @Column("IsActive")
-    private String isActive;
-
     @Column("Name")
     private String name;
 }

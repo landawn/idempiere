@@ -29,7 +29,4 @@ public class RequestGroupUpdate extends BaseEntity {
 
     @Column("AD_User_ID")
     private Integer adUserId;
-
-    @Column("IsActive")
-    private String isActive;
 }

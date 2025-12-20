@@ -1,6 +1,7 @@
 package org.idempiere.service;
 
 import java.time.LocalDateTime;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +24,7 @@ public class PaymentService {
     }
 
     public Optional<Payment> findById(Integer id) {
-        return paymentDao.findById(id);
+        try { return Optional.ofNullable(paymentDao.gett(id)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     public List<Payment> findAll() {
@@ -91,19 +92,23 @@ public class PaymentService {
     }
 
     public Payment save(Payment payment) {
-        if (payment.getCPaymentId() == null) {
-            paymentDao.insert(payment);
-        } else {
-            paymentDao.update(payment);
+        try {
+            if (payment.getCPaymentId() == null) {
+                paymentDao.insert(payment);
+            } else {
+                paymentDao.update(payment);
+            }
+            return payment;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to save", e);
         }
-        return payment;
     }
 
     public void delete(Integer id) {
-        paymentDao.deleteById(id);
+        try { paymentDao.deleteById(id); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     public boolean exists(Integer id) {
-        return paymentDao.exists(id);
+        try { return paymentDao.exists(id); } catch (SQLException e) { throw new RuntimeException("Failed to check exists", e); }
     }
 }

@@ -2,6 +2,7 @@ package org.idempiere.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +29,7 @@ public class AllocationService {
      * Get allocation by ID.
      */
     public Optional<AllocationHdr> getById(int allocationId) {
-        return allocationDao.findById(allocationId);
+        try { return Optional.ofNullable(allocationDao.gett(allocationId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -87,17 +88,25 @@ public class AllocationService {
      * Create a new allocation header.
      */
     public AllocationHdr createAllocation(AllocationHdr allocation) {
-        allocation.setDocStatus("DR");
-        allocation.setProcessed("N");
-        allocationDao.insert(allocation);
-        return allocation;
+        try {
+            allocation.setDocStatus("DR");
+            allocation.setProcessed("N");
+            allocationDao.insert(allocation);
+            return allocation;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to create allocation", e);
+        }
     }
 
     /**
      * Update allocation header.
      */
     public AllocationHdr updateAllocation(AllocationHdr allocation) {
-        allocationDao.update(allocation);
-        return allocation;
+        try {
+            allocationDao.update(allocation);
+            return allocation;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to update allocation", e);
+        }
     }
 }

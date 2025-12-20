@@ -40,16 +40,16 @@ public class Invoice extends BaseEntity {
     private String docAction;
 
     @Column("Processing")
-    private Boolean processing;
+    private String processing;
 
     @Column("Processed")
-    private Boolean processed;
+    private String processed;
 
     @Column("ProcessedOn")
     private BigDecimal processedOn;
 
     @Column("Posted")
-    private Boolean posted;
+    private String posted;
 
     @Column("C_DocType_ID")
     private Integer cDocTypeId;
@@ -61,10 +61,10 @@ public class Invoice extends BaseEntity {
     private String description;
 
     @Column("IsSOTrx")
-    private Boolean isSOTrx;
+    private String isSOTrx;
 
     @Column("IsReturnTrx")
-    private Boolean isReturnTrx;
+    private String isReturnTrx;
 
     @Column("DateInvoiced")
     private LocalDateTime dateInvoiced;
@@ -100,16 +100,16 @@ public class Invoice extends BaseEntity {
     private Integer mRmaId;
 
     @Column("IsTransferred")
-    private Boolean isTransferred;
+    private String isTransferred;
 
     @Column("IsPrinted")
-    private Boolean isPrinted;
+    private String isPrinted;
 
     @Column("IsSelfService")
-    private Boolean isSelfService;
+    private String isSelfService;
 
     @Column("SendEMail")
-    private Boolean sendEmail;
+    private String sendEmail;
 
     @Column("C_Currency_ID")
     private Integer cCurrencyId;
@@ -139,7 +139,7 @@ public class Invoice extends BaseEntity {
     private Integer mPriceListId;
 
     @Column("IsTaxIncluded")
-    private Boolean isTaxIncluded;
+    private String isTaxIncluded;
 
     @Column("C_Campaign_ID")
     private Integer cCampaignId;
@@ -160,7 +160,7 @@ public class Invoice extends BaseEntity {
     private Integer user2Id;
 
     @Column("IsApproved")
-    private Boolean isApproved;
+    private String isApproved;
 
     @Column("C_Payment_ID")
     private Integer cPaymentId;
@@ -169,13 +169,13 @@ public class Invoice extends BaseEntity {
     private Integer cCashLineId;
 
     @Column("IsDiscountPrinted")
-    private Boolean isDiscountPrinted;
+    private String isDiscountPrinted;
 
     @Column("IsPaid")
-    private Boolean isPaid;
+    private String isPaid;
 
     @Column("IsInDispute")
-    private Boolean isInDispute;
+    private String isInDispute;
 
     @Column("CopyFrom")
     private String copyFrom;
@@ -184,7 +184,7 @@ public class Invoice extends BaseEntity {
     private Integer reversalId;
 
     @Column("IsPayScheduleValid")
-    private Boolean isPayScheduleValid;
+    private String isPayScheduleValid;
 
     @Column("C_DunningLevel_ID")
     private Integer cDunningLevelId;
@@ -199,7 +199,7 @@ public class Invoice extends BaseEntity {
     private Integer cDepartmentId;
 
     @Column("ScheduledPaymentExecuted")
-    private Boolean scheduledPaymentExecuted;
+    private String scheduledPaymentExecuted;
 
     @Column("Pay_BPartner_ID")
     private Integer payBpartnerId;

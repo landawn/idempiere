@@ -60,9 +60,6 @@ public class GLJournalGeneratorLine extends BaseEntity {
     @Column("GL_JournalGeneratorSource_ID")
     private Integer glJournalGeneratorSourceId;
 
-    @Column("IsActive")
-    private String isActive;
-
     @Column("Line")
     private Integer line;
 

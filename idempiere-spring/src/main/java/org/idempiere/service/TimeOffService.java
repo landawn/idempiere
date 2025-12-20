@@ -3,6 +3,7 @@ package org.idempiere.service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +29,7 @@ public class TimeOffService {
      * Get time off request by ID.
      */
     public Optional<TimeOffRequest> getById(int requestId) {
-        return timeOffRequestDao.findById(requestId);
+        try { return Optional.ofNullable(timeOffRequestDao.gett(requestId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -81,7 +82,7 @@ public class TimeOffService {
      * Approve a time off request.
      */
     public TimeOffRequest approveRequest(int requestId, int approverId, String comments) {
-        Optional<TimeOffRequest> optRequest = timeOffRequestDao.findById(requestId);
+        Optional<TimeOffRequest> optRequest = Optional.ofNullable(timeOffRequestDao.gett(requestId));
         if (optRequest.isPresent()) {
             TimeOffRequest request = optRequest.get();
             request.setStatus("A"); // Approved
@@ -100,7 +101,7 @@ public class TimeOffService {
      * Reject a time off request.
      */
     public TimeOffRequest rejectRequest(int requestId, int approverId, String comments) {
-        Optional<TimeOffRequest> optRequest = timeOffRequestDao.findById(requestId);
+        Optional<TimeOffRequest> optRequest = Optional.ofNullable(timeOffRequestDao.gett(requestId));
         if (optRequest.isPresent()) {
             TimeOffRequest request = optRequest.get();
             request.setStatus("R"); // Rejected
@@ -119,7 +120,7 @@ public class TimeOffService {
      * Cancel a time off request.
      */
     public TimeOffRequest cancelRequest(int requestId) {
-        Optional<TimeOffRequest> optRequest = timeOffRequestDao.findById(requestId);
+        Optional<TimeOffRequest> optRequest = Optional.ofNullable(timeOffRequestDao.gett(requestId));
         if (optRequest.isPresent()) {
             TimeOffRequest request = optRequest.get();
             if ("P".equals(request.getStatus())) { // Can only cancel pending requests
@@ -135,7 +136,7 @@ public class TimeOffService {
      * Process a time off request (mark as processed after payroll).
      */
     public void processRequest(int requestId) {
-        Optional<TimeOffRequest> optRequest = timeOffRequestDao.findById(requestId);
+        Optional<TimeOffRequest> optRequest = Optional.ofNullable(timeOffRequestDao.gett(requestId));
         if (optRequest.isPresent()) {
             TimeOffRequest request = optRequest.get();
             request.setProcessed("Y");

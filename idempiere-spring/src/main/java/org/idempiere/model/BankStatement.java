@@ -27,6 +27,9 @@ public class BankStatement extends BaseEntity {
     @Column("C_BankStatement_ID")
     private Integer cBankStatementId;
 
+    @Column("C_BankStatement_UU")
+    private String cBankStatementUu;
+
     @Column("C_BankAccount_ID")
     private Integer cBankAccountId;
 
@@ -55,10 +58,13 @@ public class BankStatement extends BaseEntity {
     private String docAction;
 
     @Column("Processed")
-    private String processed;
+    private Boolean processed;
+
+    @Column("Processing")
+    private Boolean processing;
 
     @Column("Posted")
-    private String posted;
+    private Boolean posted;
 
     @Column("IsApproved")
     private String isApproved;

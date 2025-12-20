@@ -1,6 +1,7 @@
 package org.idempiere.service;
 
 import java.time.LocalDateTime;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,7 +30,7 @@ public class OrderService {
     // Order operations
 
     public Optional<Order> findById(Integer id) {
-        return orderDao.findById(id);
+        try { return Optional.ofNullable(orderDao.gett(id)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     public List<Order> findAll() {
@@ -73,32 +74,40 @@ public class OrderService {
     }
 
     public Order save(Order order) {
-        if (order.getCOrderId() == null) {
-            orderDao.insert(order);
-        } else {
-            orderDao.update(order);
+        try {
+            if (order.getCOrderId() == null) {
+                orderDao.insert(order);
+            } else {
+                orderDao.update(order);
+            }
+            return order;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to save", e);
         }
-        return order;
     }
 
     public void delete(Integer id) {
         // First delete all order lines
         List<OrderLine> lines = orderLineDao.findByOrderId(id);
         for (OrderLine line : lines) {
-            orderLineDao.deleteById(line.getCOrderLineId());
+            try {
+                orderLineDao.deleteById(line.getCOrderLineId());
+            } catch (SQLException e) {
+                throw new RuntimeException("Failed to delete order line", e);
+            }
         }
         // Then delete the order
-        orderDao.deleteById(id);
+        try { orderDao.deleteById(id); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     public boolean exists(Integer id) {
-        return orderDao.exists(id);
+        try { return orderDao.exists(id); } catch (SQLException e) { throw new RuntimeException("Failed to check exists", e); }
     }
 
     // OrderLine operations
 
     public Optional<OrderLine> findLineById(Integer id) {
-        return orderLineDao.findById(id);
+        try { return Optional.ofNullable(orderLineDao.gett(id)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     public List<OrderLine> findLinesByOrderId(Integer orderId) {
@@ -118,15 +127,19 @@ public class OrderService {
     }
 
     public OrderLine saveLine(OrderLine orderLine) {
-        if (orderLine.getCOrderLineId() == null) {
-            orderLineDao.insert(orderLine);
-        } else {
-            orderLineDao.update(orderLine);
+        try {
+            if (orderLine.getCOrderLineId() == null) {
+                orderLineDao.insert(orderLine);
+            } else {
+                orderLineDao.update(orderLine);
+            }
+            return orderLine;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to save", e);
         }
-        return orderLine;
     }
 
     public void deleteLine(Integer lineId) {
-        orderLineDao.deleteById(lineId);
+        try { orderLineDao.deleteById(lineId); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 }

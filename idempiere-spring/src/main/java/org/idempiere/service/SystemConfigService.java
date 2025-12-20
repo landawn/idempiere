@@ -1,5 +1,6 @@
 package org.idempiere.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class SystemConfigService {
      * Find system config by ID.
      */
     public Optional<SystemConfig> findById(int sysConfigId) {
-        return systemConfigDao.findById(sysConfigId);
+        try { return Optional.ofNullable(systemConfigDao.gett(sysConfigId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -108,13 +109,13 @@ public class SystemConfigService {
      * Delete a system config.
      */
     public void delete(int sysConfigId) {
-        systemConfigDao.deleteById(sysConfigId);
+        try { systemConfigDao.deleteById(sysConfigId); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     /**
      * Count all configs.
      */
     public long count() {
-        return systemConfigDao.count();
+        return systemConfigDao.findAllActive().size();
     }
 }

@@ -1,5 +1,6 @@
 package org.idempiere.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class IssueService {
      * Find issue by ID.
      */
     public Optional<Issue> findById(int issueId) {
-        return issueDao.findById(issueId);
+        try { return Optional.ofNullable(issueDao.gett(issueId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -109,13 +110,13 @@ public class IssueService {
      * Delete an issue.
      */
     public void delete(int issueId) {
-        issueDao.deleteById(issueId);
+        try { issueDao.deleteById(issueId); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     /**
      * Count all issues.
      */
     public long count() {
-        return issueDao.count();
+        return issueDao.findAllActive().size();
     }
 }

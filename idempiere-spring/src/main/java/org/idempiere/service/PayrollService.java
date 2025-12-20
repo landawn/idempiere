@@ -2,6 +2,7 @@ package org.idempiere.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,7 +32,7 @@ public class PayrollService {
      * Get payroll by ID.
      */
     public Optional<Payroll> getById(int payrollId) {
-        return payrollDao.findById(payrollId);
+        try { return Optional.ofNullable(payrollDao.gett(payrollId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -69,7 +70,7 @@ public class PayrollService {
      * Delete a payroll.
      */
     public void delete(int payrollId) {
-        payrollDao.deleteById(payrollId);
+        try { payrollDao.deleteById(payrollId); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     /**

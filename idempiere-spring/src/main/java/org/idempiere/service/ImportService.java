@@ -5,6 +5,7 @@ import org.idempiere.model.ImportProcessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +24,7 @@ public class ImportService {
     }
 
     public Optional<ImportProcessor> findById(int processorId) {
-        return importProcessorDao.findById(processorId);
+        try { return Optional.ofNullable(importProcessorDao.gett(processorId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     public Optional<ImportProcessor> findByValue(String value, int clientId) {
@@ -60,7 +61,7 @@ public class ImportService {
 
     @Transactional
     public void updateLastRun(int processorId) {
-        Optional<ImportProcessor> processorOpt = importProcessorDao.findById(processorId);
+        Optional<ImportProcessor> processorOpt = Optional.ofNullable(importProcessorDao.gett(processorId));
         if (processorOpt.isPresent()) {
             ImportProcessor processor = processorOpt.get();
             processor.setDateLastRun(LocalDateTime.now());
@@ -70,7 +71,7 @@ public class ImportService {
 
     @Transactional
     public void scheduleNextRun(int processorId, LocalDateTime nextRun) {
-        Optional<ImportProcessor> processorOpt = importProcessorDao.findById(processorId);
+        Optional<ImportProcessor> processorOpt = Optional.ofNullable(importProcessorDao.gett(processorId));
         if (processorOpt.isPresent()) {
             ImportProcessor processor = processorOpt.get();
             processor.setDateNextRun(nextRun);
@@ -80,7 +81,13 @@ public class ImportService {
 
     @Transactional
     public void delete(int processorId) {
-        Optional<ImportProcessor> processorOpt = importProcessorDao.findById(processorId);
-        processorOpt.ifPresent(importProcessorDao::delete);
+        try {
+            Optional<ImportProcessor> processorOpt = Optional.ofNullable(importProcessorDao.gett(processorId));
+            if (processorOpt.isPresent()) {
+                importProcessorDao.delete(processorOpt.get());
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

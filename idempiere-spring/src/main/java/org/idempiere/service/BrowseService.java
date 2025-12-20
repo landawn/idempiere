@@ -1,5 +1,6 @@
 package org.idempiere.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class BrowseService {
      * Find browse by ID.
      */
     public Optional<Browse> findById(int browseId) {
-        return browseDao.findById(browseId);
+        try { return Optional.ofNullable(browseDao.gett(browseId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -67,25 +68,29 @@ public class BrowseService {
      * Save a browse.
      */
     public Browse save(Browse browse) {
-        if (browse.getAdBrowseId() == null || browse.getAdBrowseId() == 0) {
-            browseDao.insert(browse);
-        } else {
-            browseDao.update(browse);
+        try {
+            if (browse.getAdBrowseId() == null || browse.getAdBrowseId() == 0) {
+                browseDao.insert(browse);
+            } else {
+                browseDao.update(browse);
+            }
+            return browse;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to save", e);
         }
-        return browse;
     }
 
     /**
      * Delete a browse.
      */
     public void delete(int browseId) {
-        browseDao.deleteById(browseId);
+        try { browseDao.deleteById(browseId); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     /**
      * Count all browses.
      */
     public long count() {
-        return browseDao.count();
+        return browseDao.findAllActive().size();
     }
 }

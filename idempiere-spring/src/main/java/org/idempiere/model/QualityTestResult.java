@@ -12,8 +12,8 @@ import lombok.experimental.SuperBuilder;
 import java.math.BigDecimal;
 
 /**
- * Quality Test Result entity - M_QualityTestResult table.
- * Quality test result.
+ * Quality Test Result entity - results of quality testing.
+ * Maps to M_QualityTestResult table.
  */
 @Data
 @SuperBuilder
@@ -26,21 +26,33 @@ public class QualityTestResult extends BaseEntity {
     @Column("M_QualityTestResult_ID")
     private Integer mQualityTestResultId;
 
+    @Column("M_QualityTestResult_UU")
+    private String mQualityTestResultUu;
+
     @Column("M_QualityTest_ID")
     private Integer mQualityTestId;
 
     @Column("M_AttributeSetInstance_ID")
     private Integer mAttributeSetInstanceId;
 
-    @Column("ExpectedResult")
-    private String expectedResult;
+    @Column("M_Product_ID")
+    private Integer mProductId;
+
+    @Column("M_Lot_ID")
+    private Integer mLotId;
 
     @Column("Result")
     private String result;
 
-    @Column("IsQCPass")
-    private String isQCPass;
+    @Column("ExpectedResult")
+    private String expectedResult;
+
+    @Column("IsQualityPassed")
+    private String isQualityPassed;
 
     @Column("Processed")
     private String processed;
+
+    @Column("Description")
+    private String description;
 }

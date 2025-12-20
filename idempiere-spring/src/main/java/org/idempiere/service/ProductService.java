@@ -1,5 +1,6 @@
 package org.idempiere.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +23,7 @@ public class ProductService {
     }
 
     public Optional<Product> findById(Integer id) {
-        return productDao.findById(id);
+        try { return Optional.ofNullable(productDao.gett(id)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     public List<Product> findAll() {
@@ -33,12 +34,12 @@ public class ProductService {
         return productDao.findByValue(value);
     }
 
-    public List<Product> findByName(String name) {
+    public Optional<Product> findByName(String name) {
         return productDao.findByName(name);
     }
 
     public List<Product> findByProductCategoryId(Integer productCategoryId) {
-        return productDao.findByProductCategoryId(productCategoryId);
+        return productDao.findByCategoryId(productCategoryId);
     }
 
     public List<Product> findAllStocked() {
@@ -46,11 +47,11 @@ public class ProductService {
     }
 
     public List<Product> findAllPurchased() {
-        return productDao.findAllPurchased();
+        return productDao.findAllPurchasable();
     }
 
     public List<Product> findAllSold() {
-        return productDao.findAllSold();
+        return productDao.findAllSellable();
     }
 
     public List<Product> findByProductType(String productType) {
@@ -62,19 +63,23 @@ public class ProductService {
     }
 
     public Product save(Product product) {
-        if (product.getMProductId() == null) {
-            productDao.insert(product);
-        } else {
-            productDao.update(product);
+        try {
+            if (product.getMProductId() == null) {
+                productDao.insert(product);
+            } else {
+                productDao.update(product);
+            }
+            return product;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to save", e);
         }
-        return product;
     }
 
     public void delete(Integer id) {
-        productDao.deleteById(id);
+        try { productDao.deleteById(id); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     public boolean exists(Integer id) {
-        return productDao.exists(id);
+        try { return productDao.exists(id); } catch (SQLException e) { throw new RuntimeException("Failed to check exists", e); }
     }
 }

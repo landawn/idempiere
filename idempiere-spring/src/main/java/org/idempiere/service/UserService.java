@@ -1,5 +1,6 @@
 package org.idempiere.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +23,7 @@ public class UserService {
     }
 
     public Optional<User> findById(Integer id) {
-        return userDao.findById(id);
+        try { return Optional.ofNullable(userDao.gett(id)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     public List<User> findAll() {
@@ -54,19 +55,23 @@ public class UserService {
     }
 
     public User save(User user) {
-        if (user.getAdUserId() == null) {
-            userDao.insert(user);
-        } else {
-            userDao.update(user);
+        try {
+            if (user.getAdUserId() == null) {
+                userDao.insert(user);
+            } else {
+                userDao.update(user);
+            }
+            return user;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to save", e);
         }
-        return user;
     }
 
     public void delete(Integer id) {
-        userDao.deleteById(id);
+        try { userDao.deleteById(id); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     public boolean exists(Integer id) {
-        return userDao.exists(id);
+        try { return userDao.exists(id); } catch (SQLException e) { throw new RuntimeException("Failed to check exists", e); }
     }
 }

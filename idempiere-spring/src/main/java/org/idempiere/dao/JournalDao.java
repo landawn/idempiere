@@ -5,37 +5,40 @@ import java.util.List;
 import java.util.Optional;
 
 import com.landawn.abacus.jdbc.dao.CrudDao;
-import com.landawn.abacus.jdbc.SQLBuilder;
-import com.landawn.abacus.jdbc.annotation.Select;
+import com.landawn.abacus.query.SQLBuilder;
+import com.landawn.abacus.jdbc.annotation.Query;
 
 import org.idempiere.model.Journal;
 
 /**
  * DAO interface for GL Journal entity operations.
  */
-public interface JournalDao extends CrudDao<Journal, Integer, SQLBuilder.NSC, JournalDao> {
+public interface JournalDao extends CrudDao<Journal, Integer, SQLBuilder.PSC, JournalDao> {
 
-    @Select("SELECT * FROM GL_Journal WHERE DocumentNo = :documentNo AND IsActive = 'Y'")
-    Optional<Journal> findByDocumentNo(String documentNo);
+    @Query("SELECT * FROM GL_Journal WHERE DocumentNo = :documentNo AND AD_Client_ID = :clientId AND IsActive = 'Y'")
+    Optional<Journal> findByDocumentNo(String documentNo, Integer clientId);
 
-    @Select("SELECT * FROM GL_Journal WHERE GL_JournalBatch_ID = :batchId AND IsActive = 'Y' ORDER BY DocumentNo")
-    List<Journal> findByBatchId(Integer batchId);
+    @Query("SELECT * FROM GL_Journal WHERE GL_JournalBatch_ID = :batchId AND IsActive = 'Y' ORDER BY DocumentNo")
+    List<Journal> findByBatch(Integer batchId);
 
-    @Select("SELECT * FROM GL_Journal WHERE DocStatus = :docStatus AND IsActive = 'Y' ORDER BY DateDoc DESC")
-    List<Journal> findByDocStatus(String docStatus);
+    @Query("SELECT * FROM GL_Journal WHERE DocStatus = :docStatus AND AD_Client_ID = :clientId AND IsActive = 'Y' ORDER BY DateDoc DESC")
+    List<Journal> findByDocStatus(String docStatus, Integer clientId);
 
-    @Select("SELECT * FROM GL_Journal WHERE C_AcctSchema_ID = :acctSchemaId AND IsActive = 'Y' ORDER BY DateDoc DESC")
+    @Query("SELECT * FROM GL_Journal WHERE C_AcctSchema_ID = :acctSchemaId AND IsActive = 'Y' ORDER BY DateDoc DESC")
     List<Journal> findByAcctSchemaId(Integer acctSchemaId);
 
-    @Select("SELECT * FROM GL_Journal WHERE DateDoc BETWEEN :startDate AND :endDate AND IsActive = 'Y' ORDER BY DateDoc DESC")
+    @Query("SELECT * FROM GL_Journal WHERE DateDoc BETWEEN :startDate AND :endDate AND IsActive = 'Y' ORDER BY DateDoc DESC")
     List<Journal> findByDateRange(LocalDateTime startDate, LocalDateTime endDate);
 
-    @Select("SELECT * FROM GL_Journal WHERE DocStatus = 'DR' AND IsActive = 'Y' ORDER BY DateDoc DESC")
+    @Query("SELECT * FROM GL_Journal WHERE DocStatus = 'DR' AND IsActive = 'Y' ORDER BY DateDoc DESC")
     List<Journal> findAllDraft();
 
-    @Select("SELECT * FROM GL_Journal WHERE DocStatus = 'CO' AND IsActive = 'Y' ORDER BY DateDoc DESC")
+    @Query("SELECT * FROM GL_Journal WHERE DocStatus = 'CO' AND IsActive = 'Y' ORDER BY DateDoc DESC")
     List<Journal> findAllCompleted();
 
-    @Select("SELECT * FROM GL_Journal WHERE Posted = 'N' AND DocStatus = 'CO' AND IsActive = 'Y'")
+    @Query("SELECT * FROM GL_Journal WHERE Posted = 'N' AND DocStatus = 'CO' AND IsActive = 'Y'")
     List<Journal> findUnposted();
+
+    @Query("SELECT * FROM GL_Journal WHERE IsActive = 'Y' ORDER BY DateDoc DESC")
+    List<Journal> findAll();
 }

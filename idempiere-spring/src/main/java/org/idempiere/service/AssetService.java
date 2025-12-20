@@ -1,5 +1,6 @@
 package org.idempiere.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class AssetService {
      * Find asset by ID.
      */
     public Optional<Asset> findById(int assetId) {
-        return assetDao.findById(assetId);
+        try { return Optional.ofNullable(assetDao.gett(assetId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -109,25 +110,29 @@ public class AssetService {
      * Save an asset.
      */
     public Asset save(Asset asset) {
-        if (asset.getAAssetId() == null || asset.getAAssetId() == 0) {
-            assetDao.insert(asset);
-        } else {
-            assetDao.update(asset);
+        try {
+            if (asset.getAAssetId() == null || asset.getAAssetId() == 0) {
+                assetDao.insert(asset);
+            } else {
+                assetDao.update(asset);
+            }
+            return asset;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to save", e);
         }
-        return asset;
     }
 
     /**
      * Delete an asset.
      */
     public void delete(int assetId) {
-        assetDao.deleteById(assetId);
+        try { assetDao.deleteById(assetId); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     /**
      * Count all assets.
      */
     public long count() {
-        return assetDao.count();
+        return assetDao.findAllActive().size();
     }
 }

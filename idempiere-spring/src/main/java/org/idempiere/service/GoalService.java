@@ -1,6 +1,7 @@
 package org.idempiere.service;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +27,7 @@ public class GoalService {
      * Find goal by ID.
      */
     public Optional<Goal> findById(int goalId) {
-        return goalDao.findById(goalId);
+        try { return Optional.ofNullable(goalDao.gett(goalId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -110,13 +111,13 @@ public class GoalService {
      * Delete a goal.
      */
     public void delete(int goalId) {
-        goalDao.deleteById(goalId);
+        try { goalDao.deleteById(goalId); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     /**
      * Count all goals.
      */
     public long count() {
-        return goalDao.count();
+        return goalDao.findAllActive().size();
     }
 }

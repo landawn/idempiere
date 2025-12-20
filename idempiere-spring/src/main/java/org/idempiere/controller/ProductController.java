@@ -48,9 +48,11 @@ public class ProductController {
     }
 
     @GetMapping("/name/{name}")
-    @Operation(summary = "Get products by name")
-    public ResponseEntity<List<Product>> findByName(@PathVariable String name) {
-        return ResponseEntity.ok(productService.findByName(name));
+    @Operation(summary = "Get product by name")
+    public ResponseEntity<Product> findByName(@PathVariable String name) {
+        return productService.findByName(name)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/category/{categoryId}")

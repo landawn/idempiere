@@ -48,9 +48,11 @@ public class BPartnerController {
     }
 
     @GetMapping("/name/{name}")
-    @Operation(summary = "Get business partners by name")
-    public ResponseEntity<List<BPartner>> findByName(@PathVariable String name) {
-        return ResponseEntity.ok(bPartnerService.findByName(name));
+    @Operation(summary = "Get business partner by name")
+    public ResponseEntity<BPartner> findByName(@PathVariable String name) {
+        return bPartnerService.findByName(name)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/customers")
@@ -102,7 +104,7 @@ public class BPartnerController {
         if (!bPartnerService.exists(id)) {
             return ResponseEntity.notFound().build();
         }
-        bPartner.setCBPartnerId(id);
+        bPartner.setCBpartnerId(id);
         BPartner updated = bPartnerService.save(bPartner);
         return ResponseEntity.ok(updated);
     }

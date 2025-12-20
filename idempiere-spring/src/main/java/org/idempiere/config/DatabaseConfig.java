@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
-import com.landawn.abacus.jdbc.JdbcUtil;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
@@ -65,11 +64,6 @@ public class DatabaseConfig {
             config.addDataSourceProperty("oracle.jdbc.implicitStatementCacheSize", "100");
         }
 
-        HikariDataSource dataSource = new HikariDataSource(config);
-
-        // Register with Abacus JDBC
-        JdbcUtil.setDataSource(dataSource);
-
-        return dataSource;
+        return new HikariDataSource(config);
     }
 }

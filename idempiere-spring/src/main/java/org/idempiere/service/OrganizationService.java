@@ -1,5 +1,6 @@
 package org.idempiere.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +23,7 @@ public class OrganizationService {
     }
 
     public Optional<Organization> findById(Integer id) {
-        return organizationDao.findById(id);
+        try { return Optional.ofNullable(organizationDao.gett(id)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     public List<Organization> findAll() {
@@ -46,19 +47,23 @@ public class OrganizationService {
     }
 
     public Organization save(Organization organization) {
-        if (organization.getAdOrgId() == null) {
-            organizationDao.insert(organization);
-        } else {
-            organizationDao.update(organization);
+        try {
+            if (organization.getAdOrgId() == null) {
+                organizationDao.insert(organization);
+            } else {
+                organizationDao.update(organization);
+            }
+            return organization;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to save", e);
         }
-        return organization;
     }
 
     public void delete(Integer id) {
-        organizationDao.deleteById(id);
+        try { organizationDao.deleteById(id); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     public boolean exists(Integer id) {
-        return organizationDao.exists(id);
+        try { return organizationDao.exists(id); } catch (SQLException e) { throw new RuntimeException("Failed to check exists", e); }
     }
 }

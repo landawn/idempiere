@@ -1,5 +1,6 @@
 package org.idempiere.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,18 +23,22 @@ public class BPartnerService {
     }
 
     public Optional<BPartner> findById(Integer id) {
-        return bPartnerDao.findById(id);
+        try {
+            return Optional.ofNullable(bPartnerDao.gett(id));
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to find by id", e);
+        }
     }
 
     public List<BPartner> findAll() {
-        return bPartnerDao.findAll();
+        return bPartnerDao.findAllActive();
     }
 
     public Optional<BPartner> findByValue(String value) {
         return bPartnerDao.findByValue(value);
     }
 
-    public List<BPartner> findByName(String name) {
+    public Optional<BPartner> findByName(String name) {
         return bPartnerDao.findByName(name);
     }
 
@@ -62,19 +67,31 @@ public class BPartnerService {
     }
 
     public BPartner save(BPartner bPartner) {
-        if (bPartner.getCBPartnerId() == null) {
-            bPartnerDao.insert(bPartner);
-        } else {
-            bPartnerDao.update(bPartner);
+        try {
+            if (bPartner.getCBpartnerId() == null) {
+                bPartnerDao.insert(bPartner);
+            } else {
+                bPartnerDao.update(bPartner);
+            }
+            return bPartner;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return bPartner;
     }
 
     public void delete(Integer id) {
-        bPartnerDao.deleteById(id);
+        try {
+            bPartnerDao.deleteById(id);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to delete", e);
+        }
     }
 
     public boolean exists(Integer id) {
-        return bPartnerDao.exists(id);
+        try {
+            return bPartnerDao.exists(id);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to check exists", e);
+        }
     }
 }

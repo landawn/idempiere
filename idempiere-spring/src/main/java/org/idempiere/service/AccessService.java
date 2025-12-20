@@ -1,5 +1,6 @@
 package org.idempiere.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -120,8 +121,12 @@ public class AccessService {
      */
     @Transactional
     public TableAccess createTableAccess(TableAccess access) {
-        accessDao.insert(access);
-        return access;
+        try {
+            accessDao.insert(access);
+            return access;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to create table access", e);
+        }
     }
 
     /**
@@ -129,8 +134,12 @@ public class AccessService {
      */
     @Transactional
     public TableAccess updateTableAccess(TableAccess access) {
-        accessDao.update(access);
-        return access;
+        try {
+            accessDao.update(access);
+            return access;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to update table access", e);
+        }
     }
 
     /**
@@ -138,6 +147,6 @@ public class AccessService {
      */
     @Transactional
     public void deleteTableAccess(int accessId) {
-        accessDao.deleteById(accessId);
+        try { accessDao.deleteById(accessId); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 }

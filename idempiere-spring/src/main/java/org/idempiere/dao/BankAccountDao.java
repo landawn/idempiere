@@ -4,31 +4,31 @@ import java.util.List;
 import java.util.Optional;
 
 import com.landawn.abacus.jdbc.dao.CrudDao;
-import com.landawn.abacus.jdbc.SQLBuilder;
-import com.landawn.abacus.jdbc.annotation.Select;
+import com.landawn.abacus.query.SQLBuilder;
+import com.landawn.abacus.jdbc.annotation.Query;
 
 import org.idempiere.model.BankAccount;
 
 /**
  * DAO interface for BankAccount entity operations.
  */
-public interface BankAccountDao extends CrudDao<BankAccount, Integer, SQLBuilder.NSC, BankAccountDao> {
+public interface BankAccountDao extends CrudDao<BankAccount, Integer, SQLBuilder.PSC, BankAccountDao> {
 
-    @Select("SELECT * FROM C_BankAccount WHERE AccountNo = :accountNo AND IsActive = 'Y'")
+    @Query("SELECT * FROM C_BankAccount WHERE AccountNo = :accountNo AND IsActive = 'Y'")
     Optional<BankAccount> findByAccountNo(String accountNo);
 
-    @Select("SELECT * FROM C_BankAccount WHERE IBAN = :iban AND IsActive = 'Y'")
+    @Query("SELECT * FROM C_BankAccount WHERE IBAN = :iban AND IsActive = 'Y'")
     Optional<BankAccount> findByIban(String iban);
 
-    @Select("SELECT * FROM C_BankAccount WHERE C_Bank_ID = :bankId AND IsActive = 'Y' ORDER BY AccountNo")
+    @Query("SELECT * FROM C_BankAccount WHERE C_Bank_ID = :bankId AND IsActive = 'Y' ORDER BY AccountNo")
     List<BankAccount> findByBankId(Integer bankId);
 
-    @Select("SELECT * FROM C_BankAccount WHERE C_Currency_ID = :currencyId AND IsActive = 'Y'")
+    @Query("SELECT * FROM C_BankAccount WHERE C_Currency_ID = :currencyId AND IsActive = 'Y'")
     List<BankAccount> findByCurrencyId(Integer currencyId);
 
-    @Select("SELECT * FROM C_BankAccount WHERE IsDefault = 'Y' AND IsActive = 'Y'")
+    @Query("SELECT * FROM C_BankAccount WHERE IsDefault = 'Y' AND IsActive = 'Y'")
     Optional<BankAccount> findDefault();
 
-    @Select("SELECT * FROM C_BankAccount WHERE IsActive = 'Y' ORDER BY AccountNo")
+    @Query("SELECT * FROM C_BankAccount WHERE IsActive = 'Y' ORDER BY AccountNo")
     List<BankAccount> findAllActive();
 }

@@ -1,5 +1,6 @@
 package org.idempiere.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class DashboardService {
      * Find dashboard content by ID.
      */
     public Optional<Dashboard> findById(int dashboardId) {
-        return dashboardDao.findById(dashboardId);
+        try { return Optional.ofNullable(dashboardDao.gett(dashboardId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -88,25 +89,29 @@ public class DashboardService {
      * Save dashboard content.
      */
     public Dashboard save(Dashboard dashboard) {
-        if (dashboard.getPaDashboardContentId() == null || dashboard.getPaDashboardContentId() == 0) {
-            dashboardDao.insert(dashboard);
-        } else {
-            dashboardDao.update(dashboard);
+        try {
+            if (dashboard.getPaDashboardContentId() == null || dashboard.getPaDashboardContentId() == 0) {
+                dashboardDao.insert(dashboard);
+            } else {
+                dashboardDao.update(dashboard);
+            }
+            return dashboard;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to save", e);
         }
-        return dashboard;
     }
 
     /**
      * Delete dashboard content.
      */
     public void delete(int dashboardId) {
-        dashboardDao.deleteById(dashboardId);
+        try { dashboardDao.deleteById(dashboardId); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     /**
      * Count all dashboard content.
      */
     public long count() {
-        return dashboardDao.count();
+        return dashboardDao.findAllActive().size();
     }
 }

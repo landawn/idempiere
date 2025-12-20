@@ -104,7 +104,4 @@ public class ShippingTransaction extends BaseEntity {
 
     @Column("ProcessedOn")
     private LocalDateTime processedOn;
-
-    @Column("IsActive")
-    private String isActive;
 }

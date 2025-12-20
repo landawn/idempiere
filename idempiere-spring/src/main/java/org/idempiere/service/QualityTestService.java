@@ -1,5 +1,6 @@
 package org.idempiere.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +27,7 @@ public class QualityTestService {
      * Get quality test by ID.
      */
     public Optional<QualityTest> getById(int testId) {
-        return qualityTestDao.findById(testId);
+        try { return Optional.ofNullable(qualityTestDao.gett(testId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -84,6 +85,6 @@ public class QualityTestService {
      * Delete quality test.
      */
     public void deleteTest(int testId) {
-        qualityTestDao.deleteById(testId);
+        try { qualityTestDao.deleteById(testId); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 }

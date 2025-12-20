@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 /**
- * Valid Account Combination entity.
+ * Valid Combination entity - valid accounting combinations.
  * Maps to C_ValidCombination table.
  */
 @Data
@@ -24,8 +24,8 @@ public class ValidCombination extends BaseEntity {
     @Column("C_ValidCombination_ID")
     private Integer cValidCombinationId;
 
-    @Column("C_AcctSchema_ID")
-    private Integer cAcctSchemaId;
+    @Column("C_ValidCombination_UU")
+    private String cValidCombinationUu;
 
     @Column("Combination")
     private String combination;
@@ -36,32 +36,20 @@ public class ValidCombination extends BaseEntity {
     @Column("Alias")
     private String alias;
 
-    @Column("IsFullyQualified")
-    private String isFullyQualified;
+    @Column("C_AcctSchema_ID")
+    private Integer cAcctSchemaId;
 
     @Column("Account_ID")
     private Integer accountId;
-
-    @Column("C_SubAcct_ID")
-    private Integer cSubAcctId;
 
     @Column("M_Product_ID")
     private Integer mProductId;
 
     @Column("C_BPartner_ID")
-    private Integer cBPartnerId;
+    private Integer cBpartnerId;
 
     @Column("AD_OrgTrx_ID")
     private Integer adOrgTrxId;
-
-    @Column("C_LocFrom_ID")
-    private Integer cLocFromId;
-
-    @Column("C_LocTo_ID")
-    private Integer cLocToId;
-
-    @Column("C_SalesRegion_ID")
-    private Integer cSalesRegionId;
 
     @Column("C_Project_ID")
     private Integer cProjectId;
@@ -72,15 +60,18 @@ public class ValidCombination extends BaseEntity {
     @Column("C_Activity_ID")
     private Integer cActivityId;
 
+    @Column("C_SalesRegion_ID")
+    private Integer cSalesRegionId;
+
+    @Column("C_LocFrom_ID")
+    private Integer cLocFromId;
+
+    @Column("C_LocTo_ID")
+    private Integer cLocToId;
+
     @Column("User1_ID")
     private Integer user1Id;
 
     @Column("User2_ID")
     private Integer user2Id;
-
-    @Column("UserElement1_ID")
-    private Integer userElement1Id;
-
-    @Column("UserElement2_ID")
-    private Integer userElement2Id;
 }

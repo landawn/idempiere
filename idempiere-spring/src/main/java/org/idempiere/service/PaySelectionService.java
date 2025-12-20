@@ -1,6 +1,7 @@
 package org.idempiere.service;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +29,7 @@ public class PaySelectionService {
      * Get pay selection by ID.
      */
     public Optional<PaySelection> getById(int paySelectionId) {
-        return paySelectionDao.findById(paySelectionId);
+        try { return Optional.ofNullable(paySelectionDao.gett(paySelectionId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -97,6 +98,6 @@ public class PaySelectionService {
      * Delete pay selection.
      */
     public void deletePaySelection(int paySelectionId) {
-        paySelectionDao.deleteById(paySelectionId);
+        try { paySelectionDao.deleteById(paySelectionId); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 }

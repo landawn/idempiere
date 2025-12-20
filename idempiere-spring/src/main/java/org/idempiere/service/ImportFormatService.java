@@ -1,5 +1,6 @@
 package org.idempiere.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class ImportFormatService {
      * Find import format by ID.
      */
     public Optional<ImportFormat> findById(int importFormatId) {
-        return importFormatDao.findById(importFormatId);
+        try { return Optional.ofNullable(importFormatDao.gett(importFormatId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -79,13 +80,13 @@ public class ImportFormatService {
      * Delete an import format.
      */
     public void delete(int importFormatId) {
-        importFormatDao.deleteById(importFormatId);
+        try { importFormatDao.deleteById(importFormatId); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     /**
      * Count all import formats.
      */
     public long count() {
-        return importFormatDao.count();
+        return importFormatDao.findAllActive().size();
     }
 }

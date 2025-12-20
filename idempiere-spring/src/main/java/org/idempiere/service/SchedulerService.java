@@ -1,6 +1,7 @@
 package org.idempiere.service;
 
 import java.time.LocalDateTime;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +27,7 @@ public class SchedulerService {
      * Find scheduler by ID.
      */
     public Optional<Scheduler> findById(int schedulerId) {
-        return schedulerDao.findById(schedulerId);
+        try { return Optional.ofNullable(schedulerDao.gett(schedulerId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -68,35 +69,57 @@ public class SchedulerService {
      * Save a scheduler.
      */
     public Scheduler save(Scheduler scheduler) {
-        if (scheduler.getAdSchedulerId() == null || scheduler.getAdSchedulerId() == 0) {
-            schedulerDao.insert(scheduler);
-        } else {
-            schedulerDao.update(scheduler);
+        try {
+            if (scheduler.getAdSchedulerId() == null || scheduler.getAdSchedulerId() == 0) {
+                schedulerDao.insert(scheduler);
+            } else {
+                schedulerDao.update(scheduler);
+            }
+            return scheduler;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to save", e);
         }
-        return scheduler;
     }
 
     /**
      * Update scheduler run information.
      */
     public Scheduler updateRunInfo(Scheduler scheduler, LocalDateTime nextRun) {
-        scheduler.setDateLastRun(LocalDateTime.now());
-        scheduler.setDateNextRun(nextRun);
-        schedulerDao.update(scheduler);
-        return scheduler;
+        try {
+            scheduler.setDateLastRun(LocalDateTime.now());
+            scheduler.setDateNextRun(nextRun);
+            schedulerDao.update(scheduler);
+            return scheduler;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to update run info", e);
+        }
     }
 
     /**
      * Delete a scheduler.
      */
     public void delete(int schedulerId) {
-        schedulerDao.deleteById(schedulerId);
+        try { schedulerDao.deleteById(schedulerId); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     /**
      * Count all schedulers.
      */
     public long count() {
-        return schedulerDao.count();
+        return schedulerDao.findAllActive().size();
+    }
+
+    /**
+     * Find all schedulers.
+     */
+    public List<Scheduler> findAll() {
+        return schedulerDao.findAllActive();
+    }
+
+    /**
+     * Check if scheduler exists.
+     */
+    public boolean exists(Integer id) {
+        try { return schedulerDao.exists(id); } catch (SQLException e) { throw new RuntimeException("Failed to check exists", e); }
     }
 }

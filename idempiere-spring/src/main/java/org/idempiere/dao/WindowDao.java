@@ -5,25 +5,29 @@ import java.util.Optional;
 
 import org.idempiere.model.Window;
 
-import com.landawn.abacus.annotation.Dao;
-import com.landawn.abacus.annotation.Dao.Cache;
-import com.landawn.abacus.condition.ConditionFactory.CF;
-import com.landawn.abacus.jdbc.Jdbc;
-import com.landawn.abacus.jdbc.SQLBuilder;
-import com.landawn.abacus.jdbc.annotation.Select;
+import com.landawn.abacus.jdbc.annotation.Cache;
+import com.landawn.abacus.jdbc.annotation.Query;
+import com.landawn.abacus.jdbc.dao.CrudDao;
+import com.landawn.abacus.query.SQLBuilder;
 
-@Dao(cache = @Cache(capacity = 100, evictDelay = 3000))
-public interface WindowDao extends CrudDao<Window, Integer, SQLBuilder.NSC, WindowDao> {
+@Cache(capacity = 100, evictDelay = 3000)
+public interface WindowDao extends CrudDao<Window, Integer, SQLBuilder.PSC, WindowDao> {
 
-    @Select("SELECT * FROM AD_Window WHERE Name = :name AND IsActive = 'Y'")
+    @Query("SELECT * FROM AD_Window WHERE Name = :name AND IsActive = 'Y'")
     Optional<Window> findByName(String name);
 
-    @Select("SELECT * FROM AD_Window WHERE IsActive = 'Y' ORDER BY Name")
+    @Query("SELECT * FROM AD_Window WHERE IsActive = 'Y' ORDER BY Name")
     List<Window> findAllActive();
 
-    @Select("SELECT * FROM AD_Window WHERE WindowType = :windowType AND IsActive = 'Y' ORDER BY Name")
+    @Query("SELECT * FROM AD_Window WHERE WindowType = :windowType AND IsActive = 'Y' ORDER BY Name")
     List<Window> findByWindowType(String windowType);
 
-    @Select("SELECT * FROM AD_Window WHERE IsSOTrx = :isSOTrx AND IsActive = 'Y' ORDER BY Name")
+    @Query("SELECT * FROM AD_Window WHERE IsSOTrx = :isSOTrx AND IsActive = 'Y' ORDER BY Name")
     List<Window> findBySalesTransaction(String isSOTrx);
+
+    @Query("SELECT * FROM AD_Window WHERE EntityType = :entityType AND IsActive = 'Y' ORDER BY Name")
+    List<Window> findByEntityType(String entityType);
+
+    @Query("SELECT * FROM AD_Window ORDER BY Name")
+    List<Window> findAll();
 }

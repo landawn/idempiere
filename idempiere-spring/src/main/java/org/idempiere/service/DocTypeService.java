@@ -1,5 +1,6 @@
 package org.idempiere.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,11 @@ public class DocTypeService {
      * Find document type by ID.
      */
     public Optional<DocType> findById(int docTypeId) {
-        return docTypeDao.findById(docTypeId);
+        try {
+            return Optional.ofNullable(docTypeDao.gett(docTypeId));
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to find by id", e);
+        }
     }
 
     /**
@@ -137,18 +142,44 @@ public class DocTypeService {
      * Save a document type.
      */
     public DocType save(DocType docType) {
-        if (docType.getCDocTypeId() == null || docType.getCDocTypeId() == 0) {
-            docTypeDao.insert(docType);
-        } else {
-            docTypeDao.update(docType);
+        try {
+            if (docType.getCDocTypeId() == null || docType.getCDocTypeId() == 0) {
+                docTypeDao.insert(docType);
+            } else {
+                docTypeDao.update(docType);
+            }
+            return docType;
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to save doc type", e);
         }
-        return docType;
     }
 
     /**
      * Delete a document type.
      */
     public void delete(int docTypeId) {
-        docTypeDao.deleteById(docTypeId);
+        try {
+            docTypeDao.deleteById(docTypeId);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to delete", e);
+        }
+    }
+
+    /**
+     * Find all document types.
+     */
+    public List<DocType> findAll() {
+        return docTypeDao.findAll();
+    }
+
+    /**
+     * Check if document type exists.
+     */
+    public boolean exists(int docTypeId) {
+        try {
+            return docTypeDao.exists(docTypeId);
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to check exists", e);
+        }
     }
 }

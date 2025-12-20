@@ -1,5 +1,6 @@
 package org.idempiere.service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class PrintFormatService {
      * Find print format by ID.
      */
     public Optional<PrintFormat> findById(int printFormatId) {
-        return printFormatDao.findById(printFormatId);
+        try { return Optional.ofNullable(printFormatDao.gett(printFormatId)); } catch (SQLException e) { throw new RuntimeException("Failed to find by id", e); }
     }
 
     /**
@@ -93,13 +94,13 @@ public class PrintFormatService {
      * Delete a print format.
      */
     public void delete(int printFormatId) {
-        printFormatDao.deleteById(printFormatId);
+        try { printFormatDao.deleteById(printFormatId); } catch (SQLException e) { throw new RuntimeException("Failed to delete", e); }
     }
 
     /**
      * Count all print formats.
      */
     public long count() {
-        return printFormatDao.count();
+        return printFormatDao.findAllActive().size();
     }
 }
